@@ -8,11 +8,11 @@
 	- railgun: shoots in the direction of the player in a line until it hits a wall, but takes two - three seconds to charge
 	- armour of thorns: the player moves 1.2x-1.5x as fast and can now instantly eliminate opponents on contact, but has no range otherwise
 	- rc rocket: player launches a fast rocket that moves according to the movement keys (but not backwards), and explodes in a small area upon triggering the interact key, but the player itself does not move while the rocket is active
-	- mine: player drops a mine using the interact key, which turns invisible after three seconds; eliminates anyone that moves over it, including the original player
+	- mine: player drops a mine using the interact key, which turns invisible after three seconds; eliminates anyone that moves over it, including the original player.
 	- laser gun: has three charges, shoots a decently fast laser bullet in a straight line (until hitting a wall)
 	- emp: small blast that can go through walls, destroying other projectiles or mines as well as other players
 	- katana: has three? charges, player dashes a predetermined distance, ignoring any mines or projectiles and eliminating other players; does not eliminate a player with the armour of thorns
 	- quad laser: shoots a large, slow bullet that travels through walls until it leaves the screen
 - if players are elimated they are gone for three seconds and randomly respawn with a three second invulnerability
-- players are scored based on how many eliminations they have (+1 for every player eliminated, -1 if self-elimination)
-- after three minutes the player with the most points wins
+- players are scored based on how many eliminations they have (+1 for every player eliminated, -1 if self-elimination).  I recommend that there are no points for eliminating, since the mine complicates things. Instead, have a set starting points, and being eliminated is a loss, irrespective of how the hit is taken. This allows for score based and time based victory conditions.
+- after three minutes the player with the most points wins, though other gamemodes are possible (Sudden Death, etc.)
