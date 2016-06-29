@@ -2,8 +2,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-game', { preload: prel
 
 var playerSpeed = 5;
 
-var player;
-var keys;
+var players;
 
 function preload() {
 
@@ -14,23 +13,52 @@ function preload() {
 
 function create() {
 
-    game.stage.backgroundColor = '#3433bb';
-    //  This simply creates a sprite using the mushroom image we loaded above and positions it at 200 x 200
-    player = game.add.sprite(200, 200, 'player1');
+    game.stage.backgroundColor = '5F3C73';
+    
+    initialisePlayers();
+    
+}
 
+function initialisePlayers() {
+    // TODO: Make the number of players selectable somewher, somehow
+    players = [];
+    
+    // Create a new object, storing information for each player
+    players[0] = {
+        sprite: game.add.sprite(200, 200, 'player1'),
+        keys: game.input.keyboard.addKeys({
+            'up': Phaser.KeyCode.W,
+            'down': Phaser.KeyCode.S,
+            'left': Phaser.KeyCode.A,
+            'right': Phaser.KeyCode.D
+        })
+    }
+    players[1] = {
+        sprite: game.add.sprite(400, 400, 'player1'),
+        keys: game.input.keyboard.addKeys({
+            'up': Phaser.KeyCode.UP,
+            'down': Phaser.KeyCode.DOWN,
+            'left': Phaser.KeyCode.LEFT,
+            'right': Phaser.KeyCode.RIGHT
+        })
+    }
 }
 
 function update() {
-    if (keys.down.isDown) {
-        player.y += playerSpeed;
-    }
-    if (keys.up.isDown) {
-        player.y -= playerSpeed;
-    }
-    if (keys.right.isDown) {
-        player.x += playerSpeed;
-    }
-    if (keys.left.isDown) {
-        player.x -= playerSpeed;
+    for (var i = 0; i < players.length; i ++) {
+        sprite = players[i].sprite;
+        keys = players[i].keys;
+        if (keys.down.isDown) {
+            sprite.y += playerSpeed;
+        }
+        if (keys.up.isDown) {
+            sprite.y -= playerSpeed;
+        }
+        if (keys.right.isDown) {
+            sprite.x += playerSpeed;
+        }
+        if (keys.left.isDown) {
+            sprite.x -= playerSpeed;
+        }
     }
 }
