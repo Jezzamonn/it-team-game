@@ -1,5 +1,7 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-game', { preload: preload, create: create, update: update });
 
+var playerSpeed = 5;
+
 var player;
 var keys;
 
@@ -8,7 +10,6 @@ function preload() {
     game.load.image('player1', 'p1.png');
     
     keys = game.input.keyboard.createCursorKeys();
-
 }
 
 function create() {
@@ -21,15 +22,15 @@ function create() {
 
 function update() {
     if (keys.down.isDown) {
-        player.y += 1;
+        player.y += playerSpeed;
     }
     if (keys.up.isDown) {
-        player.y -= 1;
+        player.y -= playerSpeed;
     }
     if (keys.right.isDown) {
-        player.x += 1;
+        player.x += playerSpeed;
     }
     if (keys.left.isDown) {
-        player.x -= 1;
+        player.x -= playerSpeed;
     }
 }

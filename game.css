@@ -1,0 +1,8 @@
+html {
+    background-color: black;
+}
+
+/* Center the game */
+canvas {
+    margin: 0 auto;
+}
