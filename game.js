@@ -36,6 +36,8 @@ function initialisePlayers() {
     players[2].sprite.y = game.height - players[2].sprite.height;
     players[3].sprite.x = game.width - players[3].sprite.width;
     players[3].sprite.y = game.height - players[3].sprite.height;
+    
+    makePlayerMega(players[0]);
 }
 
 function createPlayer(spriteName, keyNames) {
@@ -46,10 +48,32 @@ function createPlayer(spriteName, keyNames) {
             'left':  Phaser.KeyCode[keyNames[1]],
             'down':  Phaser.KeyCode[keyNames[2]],
             'right': Phaser.KeyCode[keyNames[3]],
-        })
+        }),
+        speedScale: 1.0,
+        powerUp: null,
     }
-    player.sprite.scale.setTo(0.2, 0.2)
+    makePlayerRegular(player)
     return player;
+}
+
+function makePlayerRegular(player) {
+    player.sprite.scale.setTo(0.2, 0.2);
+    player.speedScale = 1.0;
+    player.powerUp = null;
+}
+
+function makePlayerMega(player) {
+    player.sprite.scale.setTo(0.4, 0.4);
+    player.speedScale = 1.2;
+    player.powerUp = "mega";
+}
+
+function playersTouching(player1, player2) {
+    // This is a simple test to see whether two rectangles overlap.
+    return player1.sprite.right > player2.sprite.left &&
+           player2.sprite.right > player1.sprite.left &&
+           player1.sprite.bottom > player2.sprite.top &&
+           player2.sprite.bottom > player1.sprite.top;
 }
 
 function update() {
@@ -85,6 +109,25 @@ function update() {
         }
         else if (sprite.x + sprite.width > game.width) {
             sprite.x = game.width - sprite.width;
+        }
+        
+        // check collisions
+        if (players[i].powerUp == "mega") {
+            for (var j = 0; j < players.length; j ++) {
+                // don't check collisions with the same player
+                if (i == j) {
+                    continue;
+                }
+                
+                // If the players touch, move the new player to a random position
+                // It's in a while loop because there's a small chance the player
+                // will be moved so that they still touch. If this happens, it'll
+                // try again.
+                while (playersTouching(players[i], players[j])) {
+                    players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
+                    players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
+                }
+            }
         }
     }
 }
