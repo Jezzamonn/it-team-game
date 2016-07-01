@@ -78,15 +78,16 @@ function playersTouching(player1, player2) {
 
 function update() {
     for (var i = 0; i < players.length; i ++) {
+        player = players[i];
         sprite = players[i].sprite;
         keys = players[i].keys;
         
         // vertical movement
         if (keys.down.isDown) {
-            sprite.y += playerSpeed;
+            sprite.y += playerSpeed * player.speedScale;
         }
         if (keys.up.isDown) {
-            sprite.y -= playerSpeed;
+            sprite.y -= playerSpeed * player.speedScale;
         }
         // force the player to be within the game boundaries
         if (sprite.y < 0) {
@@ -98,10 +99,10 @@ function update() {
         
         // horizontal movement
         if (keys.right.isDown) {
-            sprite.x += playerSpeed;
+            sprite.x += playerSpeed * player.speedScale;
         }
         if (keys.left.isDown) {
-            sprite.x -= playerSpeed;
+            sprite.x -= playerSpeed * player.speedScale;
         }
         // force the player to be within the game boundaries
         if (sprite.x < 0) {
@@ -112,7 +113,7 @@ function update() {
         }
         
         // check collisions
-        if (players[i].powerUp == "mega") {
+        if (player.powerUp == "mega") {
             for (var j = 0; j < players.length; j ++) {
                 // don't check collisions with the same player
                 if (i == j) {
@@ -123,7 +124,7 @@ function update() {
                 // It's in a while loop because there's a small chance the player
                 // will be moved so that they still touch. If this happens, it'll
                 // try again.
-                while (playersTouching(players[i], players[j])) {
+                while (playersTouching(player, players[j])) {
                     players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
                     players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
                 }
