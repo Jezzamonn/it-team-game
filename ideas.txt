@@ -16,3 +16,11 @@
 - if players are elimated they are gone for three seconds and randomly respawn with a three second invulnerability
 - players are scored based on how many eliminations they have (+1 for every player eliminated, -1 if self-elimination).  I recommend that there are no points for eliminating, since the mine complicates things. Instead, have a set starting points, and being eliminated is a loss, irrespective of how the hit is taken. This allows for score based and time based victory conditions.
 - after three minutes the player with the most points wins, though other gamemodes are possible (Sudden Death, etc.)
+
+
+
+Player icons:
+
+Powerup shown by change to centre of icon.
+Centre of Icon is a boring empty circle, gets filled with powerups. If different powerups, then different contents.
+Players distinguished by both colour and external shape.
