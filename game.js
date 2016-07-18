@@ -8,6 +8,9 @@ var powerUp;
 function preload() {
 
     game.load.image('player1', 'p1.png');
+    game.load.image('player2', 'p2.png');
+    game.load.image('player3', 'p3.png');
+    game.load.image('player4', 'p4.png');
     game.load.image('powerup', 'powerup.png');
     
     keys = game.input.keyboard.createCursorKeys();
@@ -15,7 +18,7 @@ function preload() {
 
 function create() {
 
-    game.stage.backgroundColor = '5F3C73';
+    game.stage.backgroundColor = '111111';
     
     initialisePlayers();
     initialisePowerUp();
@@ -33,9 +36,9 @@ function initialisePlayers() {
     // Could bit made a little more modular, but on the whole it's ok.
     players = [
         createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT']),
-        createPlayer('player1', ['W', 'A', 'S', 'D']),
-        createPlayer('player1', ['I', 'J', 'K', 'L']),
-        createPlayer('player1', ['G', 'V', 'B', 'N']),
+        createPlayer('player2', ['W', 'A', 'S', 'D']),
+        createPlayer('player3', ['I', 'J', 'K', 'L']),
+        createPlayer('player4', ['G', 'V', 'B', 'N']),
     ]
     
     // Space out the players
