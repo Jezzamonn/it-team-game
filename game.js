@@ -3,10 +3,12 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-game', { preload: prel
 var playerSpeed = 5;
 
 var players;
+var powerUp;
 
 function preload() {
 
     game.load.image('player1', 'p1.png');
+    game.load.image('powerup', 'powerup.png');
     
     keys = game.input.keyboard.createCursorKeys();
 }
@@ -16,7 +18,12 @@ function create() {
     game.stage.backgroundColor = '5F3C73';
     
     initialisePlayers();
-    
+    initialisePowerUp();
+    randomisePowerUp();
+}
+
+function initialisePowerUp() {
+    powerUp = game.add.sprite(100, 100, 'powerup')
 }
 
 function initialisePlayers() {
@@ -42,7 +49,7 @@ function initialisePlayers() {
 
 function createPlayer(spriteName, keyNames) {
     player = {
-        sprite: game.add.sprite(0, 0, 'player1'),
+        sprite: game.add.sprite(0, 0, spriteName),
         keys: game.input.keyboard.addKeys({
             'up':    Phaser.KeyCode[keyNames[0]],
             'left':  Phaser.KeyCode[keyNames[1]],
@@ -64,19 +71,38 @@ function makePlayerRegular(player) {
 
 function makePlayerMega(player) {
     player.sprite.scale.setTo(0.4, 0.4);
-    player.speedScale = 1.2;
+    player.speedScale = 1.1;
     player.powerUp = "mega";
 }
 
-function playersTouching(player1, player2) {
+function randomisePowerUp() {
+    // The initial value is just so the loop runs once
+    var touchingSomething = true;
+    while (touchingSomething) {
+        powerUp.x = (game.width - powerUp.width) * Math.random();
+        powerUp.y = (game.height - powerUp.height) * Math.random();
+
+        // check if the power up is touching a player, if so, we restart.
+        touchingSomething = false;
+        for (var i = 0; i < players.length; i ++) {
+            if (spritesTouching(players[i], powerUp)) {
+                touchingSomething = true;
+                break;
+            }
+        }
+    }
+}
+
+function spritesTouching(sprite1, sprite2) {
     // This is a simple test to see whether two rectangles overlap.
-    return player1.sprite.right > player2.sprite.left &&
-           player2.sprite.right > player1.sprite.left &&
-           player1.sprite.bottom > player2.sprite.top &&
-           player2.sprite.bottom > player1.sprite.top;
+    return sprite1.right  > sprite2.left &&
+           sprite2.right  > sprite1.left &&
+           sprite1.bottom > sprite2.top &&
+           sprite2.bottom > sprite1.top;
 }
 
 function update() {
+    var j;
     for (var i = 0; i < players.length; i ++) {
         player = players[i];
         sprite = players[i].sprite;
@@ -114,7 +140,7 @@ function update() {
         
         // check collisions
         if (player.powerUp == "mega") {
-            for (var j = 0; j < players.length; j ++) {
+            for (j = 0; j < players.length; j ++) {
                 // don't check collisions with the same player
                 if (i == j) {
                     continue;
@@ -124,11 +150,21 @@ function update() {
                 // It's in a while loop because there's a small chance the player
                 // will be moved so that they still touch. If this happens, it'll
                 // try again.
-                while (playersTouching(player, players[j])) {
-                    players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
-                    players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
+                if (spritesTouching(player.sprite, players[j].sprite)) {
+                    while (spritesTouching(player.sprite, players[j].sprite) || spritesTouching(powerUp, players[j].sprite)) {
+                        players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
+                        players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
+                    }
                 }
             }
+        }
+
+        if (spritesTouching(player.sprite, powerUp)) {
+            for (j = 0; j < players.length; j ++) {
+                makePlayerRegular(players[j]);
+            }
+            makePlayerMega(player);
+            randomisePowerUp();
         }
     }
 }
