@@ -6,6 +6,9 @@ var powerUpSpeed = 2;
 var players;
 var powerUp;
 
+var gameTime = 0;
+var timeText;
+
 function preload() {
 
     game.load.image('player1', 'p1.png');
@@ -18,12 +21,17 @@ function preload() {
 }
 
 function create() {
-
     game.stage.backgroundColor = '111111';
-    
+
+    var timeTextStyle = { font: "20px Arial", fill: "#FFFFFF", align: 'center'};
+    timeText = game.add.text(game.width / 2, 0, "0:00", timeTextStyle)
+    startGame();
+}
+
+function startGame() {
     initialisePlayers();
     initialisePowerUp();
-    //randomisePowerUp();
+    gameTime = 2 * 60 * 60;
 }
 
 function initialisePowerUp() {
@@ -153,6 +161,11 @@ function spritesTouching(sprite1, sprite2) {
 }
 
 function update() {
+    gameTime --;
+    var seconds = Math.floor(gameTime / 60) % 60;
+    var minutes = Math.floor(gameTime / 3600);
+    timeText.setText(minutes + ":" + seconds)
+
     powerUp.tint = Math.floor(0xFFFFFF * Math.random())
     powerUp.x += powerUp.xSpeed;
     powerUp.y += powerUp.ySpeed;
