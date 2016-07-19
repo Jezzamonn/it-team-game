@@ -38,7 +38,7 @@ function initialisePlayers() {
         createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT']),
         createPlayer('player2', ['W', 'A', 'S', 'D']),
         createPlayer('player3', ['I', 'J', 'K', 'L']),
-        createPlayer('player4', ['G', 'V', 'B', 'N']),
+        createPlayer('player4', ['T', 'F', 'G', 'H']),
     ]
     
     // Space out the players
@@ -59,6 +59,7 @@ function createPlayer(spriteName, keyNames) {
             'down':  Phaser.KeyCode[keyNames[2]],
             'right': Phaser.KeyCode[keyNames[3]],
         }),
+        scale: 1,
         speedScale: 1.0,
         powerUp: null,
     }
