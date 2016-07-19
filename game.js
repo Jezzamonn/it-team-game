@@ -1,6 +1,7 @@
 var game = new Phaser.Game(1200, 700, Phaser.AUTO, 'phaser-game', { preload: preload, create: create, update: update });
 
 var playerSpeed = 7;
+var powerUpSpeed = 2;
 
 var players;
 var powerUp;
@@ -22,12 +23,14 @@ function create() {
     
     initialisePlayers();
     initialisePowerUp();
-    randomisePowerUp();
+    //randomisePowerUp();
 }
 
 function initialisePowerUp() {
     powerUp = game.add.sprite(game.width / 2, game.height / 2, 'powerup')
     powerUp.scale.setTo(0.1, 0.1);
+    powerUp.xSpeed = 0;
+    powerUp.ySpeed = 0;
 }
 
 function initialisePlayers() {
@@ -137,6 +140,8 @@ function randomisePowerUp() {
             }
         }
     }
+    powerUp.xSpeed = Math.random() < 0.5 ? -powerUpSpeed : powerUpSpeed;
+    powerUp.ySpeed = Math.random() < 0.5 ? -powerUpSpeed : powerUpSpeed;
 }
 
 function spritesTouching(sprite1, sprite2) {
@@ -149,6 +154,20 @@ function spritesTouching(sprite1, sprite2) {
 
 function update() {
     powerUp.tint = Math.floor(0xFFFFFF * Math.random())
+    powerUp.x += powerUp.xSpeed;
+    powerUp.y += powerUp.ySpeed;
+    if (powerUp.left < 0) {
+        powerUp.xSpeed = Math.abs(powerUp.xSpeed);
+    }
+    else if (powerUp.right > game.width) {
+        powerUp.xSpeed = -Math.abs(powerUp.xSpeed);
+    }
+    if (powerUp.top < 0) {
+        powerUp.ySpeed = Math.abs(powerUp.ySpeed);
+    }
+    else if (powerUp.bottom > game.height) {
+        powerUp.ySpeed = -Math.abs(powerUp.ySpeed);
+    }
 
     var j;
     // update players
