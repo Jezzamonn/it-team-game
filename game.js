@@ -26,7 +26,7 @@ function create() {
 }
 
 function initialisePowerUp() {
-    powerUp = game.add.sprite(100, 100, 'powerup')
+    powerUp = game.add.sprite(0, 0, 'powerup')
 }
 
 function initialisePlayers() {
@@ -67,15 +67,23 @@ function createPlayer(spriteName, keyNames) {
 }
 
 function makePlayerRegular(player) {
-    player.sprite.scale.setTo(0.2, 0.2);
+    changePlayerScale(player, 0.2);
     player.speedScale = 1.0;
     player.powerUp = null;
 }
 
 function makePlayerMega(player) {
-    player.sprite.scale.setTo(0.4, 0.4);
+    changePlayerScale(player, 0.4);
     player.speedScale = 1.1;
     player.powerUp = "mega";
+}
+
+function changePlayerScale(player, scale) {
+    player.x -= player.sprite.width / 2;
+    player.y -= player.sprite.height / 2;
+    player.sprite.scale.setTo(scale, scale);
+    player.x += player.sprite.width / 2;
+    player.y += player.sprite.height / 2;
 }
 
 function randomisePowerUp() {
