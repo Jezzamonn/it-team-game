@@ -79,11 +79,11 @@ function makePlayerMega(player) {
 }
 
 function changePlayerScale(player, scale) {
-    player.x -= player.sprite.width / 2;
-    player.y -= player.sprite.height / 2;
+    player.sprite.x += player.sprite.width / 2;
+    player.sprite.y += player.sprite.height / 2;
     player.sprite.scale.setTo(scale, scale);
-    player.x += player.sprite.width / 2;
-    player.y += player.sprite.height / 2;
+    player.sprite.x -= player.sprite.width / 2;
+    player.sprite.y -= player.sprite.height / 2;
 }
 
 function randomisePowerUp() {
