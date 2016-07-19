@@ -64,7 +64,8 @@ function createPlayer(spriteName, keyNames, color, upEdge, leftEdge) {
         speedScale: 1.0,
         powerUp: null,
         scoreText: game.add.text(0, 0, '0', fontStyle),
-        score: 0
+        score: 0,
+        deadCount: 0
     }
     if (upEdge) {
         player.sprite.y = 0;
@@ -101,6 +102,15 @@ function makePlayerMega(player) {
     changePlayerScale(player, 0.5);
     player.speedScale = 1.1;
     player.powerUp = "mega";
+}
+
+function makePlayerVulnerable(player) {
+    player.sprite.alpha = 1;
+}
+
+function makePlayerDead(player) {
+    player.deadCount = 60;
+    player.sprite.alpha = 0.2;
 }
 
 function changePlayerScale(player, scale) {
@@ -143,6 +153,12 @@ function update() {
     var j;
     // update players
     for (var i = 0; i < players.length; i ++) {
+        if (player.deadCount > 0) {
+            player.deadCount --;
+            if (player.deadCount <= 0) {
+                makePlayerVulnerable(player);
+            }
+        }
         player = players[i];
         sprite = players[i].sprite;
         keys = players[i].keys;
@@ -184,6 +200,9 @@ function update() {
                 if (i == j) {
                     continue;
                 }
+                if (players[j].deadCount > 0) {
+                    continue;
+                }
                 
                 // If the players touch, move the new player to a random position
                 // It's in a while loop because there's a small chance the player
@@ -194,6 +213,7 @@ function update() {
                     player.score += 73
                     updateScore(player)
 
+                    makePlayerDead(players[j]);
                     while (spritesTouching(player.sprite, players[j].sprite) || spritesTouching(powerUp, players[j].sprite)) {
                         players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
                         players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
