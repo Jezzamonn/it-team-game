@@ -47,7 +47,7 @@ function initialisePlayers() {
     players[3].sprite.x = game.width - players[3].sprite.width;
     players[3].sprite.y = game.height - players[3].sprite.height;
     
-    makePlayerMega(players[0]);
+    //makePlayerMega(players[0]);
 }
 
 function createPlayer(spriteName, keyNames) {
@@ -59,7 +59,6 @@ function createPlayer(spriteName, keyNames) {
             'down':  Phaser.KeyCode[keyNames[2]],
             'right': Phaser.KeyCode[keyNames[3]],
         }),
-        scale: 1,
         speedScale: 1.0,
         powerUp: null,
     }
