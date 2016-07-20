@@ -1,15 +1,36 @@
 var game = new Phaser.Game(1200, 700, Phaser.AUTO, 'phaser-game', { preload: preload, create: create, update: update });
 
-var playerSpeed = 7;
+var playerSpeed = 6;
 var powerUpSpeed = 2;
 
-var players;
+var players = [];
 var powerUp;
 
 var gameTime = 0;
 var timeText;
 
 var gameOverText;
+var titleTexts;
+
+var state = 'title';
+
+var instructions = [
+"Player 1: Arrow Keys",
+"Player 2: WASD",
+"Player 3: IJKL",
+"Player 4: TFGH",
+"Seize the EU fragment to turn huge",
+"Fly into other players to attack them",
+]
+
+var colors = [
+'red',    
+'green',  
+'#0077FF',
+'purple', 
+'white',
+'white',
+]
 
 function preload() {
 
@@ -24,8 +45,10 @@ function create() {
     game.stage.backgroundColor = '111111';
 
     var timeTextStyle = { font: "20px Arial", fill: "#FFFFFF", align: 'center'};
-    timeText = game.add.text(game.width / 2, 0, "0:00", timeTextStyle)
-    startGame();
+    timeText = game.add.text(game.width / 2, 0, "0:00", timeTextStyle);
+
+    //startGame();
+    startTitle();
 }
 
 //------------------------------------------------
@@ -35,18 +58,37 @@ function startGame() {
     initialisePlayers();
     initialisePowerUp();
     gameTime = 1.5 * 60 * 60;
+
+    state = 'game'
 }
 
-function endGame() {
+function destoryPlayers() {
     for (var i = 0; i < players.length; i ++) {
         players[i].sprite.destroy();
+        players[i].scoreText.destroy();
     }
-    powerUp.destroy();
     //game.input.keyboard.destroy();
 }
 
 function startTitle() {
+    titleTexts = []
 
+    var textStyle = { font: '80px Arial', fill: '#FFFFFF', align: 'center'};
+    var title = game.add.text(0.5 * game.width, 0.2 * game.height, 'WORKING TITLE 2', textStyle);
+    title.anchor.x = 0.5;
+
+    var controlStyle = { font: '40px Arial', fill: '#FFFFFF', align: 'center'};
+    for (var i = 0; i < instructions.length; i ++) {
+        var amt = i / (instructions.length - 1);
+        var yPos = 0.45 + 0.35 * amt;
+        controlStyle.fill = colors[i];
+        var controlText = game.add.text(0.5 * game.width, yPos * game.height, instructions[i], controlStyle);
+        controlText.anchor.x = 0.5;
+    }
+
+    titleTexts.push(title);
+
+    state = 'title'
 }
 
 function endTitle() {
@@ -54,7 +96,14 @@ function endTitle() {
 }
 
 function startGameOver() {
+    powerUp.destroy();
+    powerUp = null;
+    for (var i = 0; i < players.length; i ++) {
+        makePlayerRegular(players[i]);
+    }
 
+    var textStyle = { font: "20px Arial", fill: "#FFFFFF", align: 'center'};
+    gameOverText = game.add.text(game.width / 2, game.height / 2, 'GAME OVER', textStyle);
 }
 
 function endGameOver() {
@@ -74,11 +123,11 @@ function initialisePlayers() {
     // This creates all the players with one big array literal.
     // Could bit made a little more modular, but on the whole it's ok.
     players = [
-        createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT'], 'red', false, false),
-        createPlayer('player2', ['W', 'A', 'S', 'D'], 'green', false, true),
-        createPlayer('player3', ['I', 'J', 'K', 'L'], '#0077FF', true, false),
-        createPlayer('player4', ['T', 'F', 'G', 'H'], 'purple', true, true),
-    ]
+        createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT'], colors[0], true,  true ),
+        createPlayer('player2', ['W', 'A', 'S', 'D'],            colors[1], true,  false),
+        createPlayer('player3', ['I', 'J', 'K', 'L'],            colors[2], false, true ),
+        createPlayer('player4', ['T', 'F', 'G', 'H'],            colors[3], false, false),
+    ];
     
     //makePlayerMega(players[0]);
 }
@@ -99,6 +148,7 @@ function createPlayer(spriteName, keyNames, color, upEdge, leftEdge) {
             'down':  Phaser.KeyCode[keyNames[2]],
             'right': Phaser.KeyCode[keyNames[3]],
         }),
+        color: color,
         speedScale: 1.0,
         powerUp: null,
         scoreText: game.add.text(0, 0, '0', fontStyle),
@@ -188,7 +238,15 @@ function spritesTouching(sprite1, sprite2) {
 }
 
 function update() {
-    gameTime --;
+    if (state == 'game') {
+        gameTime --;
+        if (gameTime < 0 && state == 'game') {
+            startGameOver();
+        }
+    }
+    else {
+        gameTime = 0;
+    }
     var seconds = (Math.floor(gameTime / 60) % 60).toString();
     while (seconds.length < 2) {
         seconds = '0' + seconds;
@@ -196,20 +254,22 @@ function update() {
     var minutes = Math.floor(gameTime / 3600);
     timeText.setText(minutes + ":" + seconds)
 
-    powerUp.tint = Math.floor(0xFFFFFF * Math.random())
-    powerUp.x += powerUp.xSpeed;
-    powerUp.y += powerUp.ySpeed;
-    if (powerUp.left < 0) {
-        powerUp.xSpeed = Math.abs(powerUp.xSpeed);
-    }
-    else if (powerUp.right > game.width) {
-        powerUp.xSpeed = -Math.abs(powerUp.xSpeed);
-    }
-    if (powerUp.top < 0) {
-        powerUp.ySpeed = Math.abs(powerUp.ySpeed);
-    }
-    else if (powerUp.bottom > game.height) {
-        powerUp.ySpeed = -Math.abs(powerUp.ySpeed);
+    if (powerUp) {
+        powerUp.tint = Math.floor(0xFFFFFF * Math.random())
+        powerUp.x += powerUp.xSpeed;
+        powerUp.y += powerUp.ySpeed;
+        if (powerUp.left < 0) {
+            powerUp.xSpeed = Math.abs(powerUp.xSpeed);
+        }
+        else if (powerUp.right > game.width) {
+            powerUp.xSpeed = -Math.abs(powerUp.xSpeed);
+        }
+        if (powerUp.top < 0) {
+            powerUp.ySpeed = Math.abs(powerUp.ySpeed);
+        }
+        else if (powerUp.bottom > game.height) {
+            powerUp.ySpeed = -Math.abs(powerUp.ySpeed);
+        }
     }
 
     var j;
@@ -276,7 +336,9 @@ function update() {
                     updateScore(player)
 
                     makePlayerDead(players[j]);
-                    while (spritesTouching(player.sprite, players[j].sprite) || spritesTouching(powerUp, players[j].sprite)) {
+                    while (spritesTouching(player.sprite, players[j].sprite) ||
+                        (powerUp != null && spritesTouching(powerUp, players[j].sprite))) {
+
                         players[j].sprite.x = (game.width - players[j].sprite.width) * Math.random();
                         players[j].sprite.y = (game.height - players[j].sprite.height) * Math.random();
                     }
@@ -284,7 +346,7 @@ function update() {
             }
         }
 
-        if (spritesTouching(player.sprite, powerUp)) {
+        if (powerUp != null && spritesTouching(player.sprite, powerUp)) {
             for (j = 0; j < players.length; j ++) {
                 makePlayerRegular(players[j]);
             }

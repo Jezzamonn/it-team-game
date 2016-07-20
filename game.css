@@ -5,6 +5,11 @@ html {
     font-family: sans-serif;
 }
 
+p, h1 {
+	margin-bottom: 0;
+	margin-top: 2px;
+}
+
 /* Center the game */
 canvas {
     margin: 0 auto;
