@@ -9,7 +9,7 @@ var powerUp;
 var gameTime = 0;
 var timeText;
 
-var gameOverText;
+var gameOverTexts;
 var titleTexts;
 
 var state = 'title';
@@ -25,7 +25,7 @@ var instructions = [
 
 var colors = [
 'red',    
-'green',  
+'#00FF00',  
 '#0077FF',
 'purple', 
 'white',
@@ -54,28 +54,30 @@ function create() {
 //------------------------------------------------
 //              STATE TRANSITIONS
 //------------------------------------------------
-function startGame() {
-    initialisePlayers();
+function startGame(numPlayers) {
+    if (state == 'title') {
+        endTitle();
+    }
+
+    initialisePlayers(numPlayers);
     initialisePowerUp();
     gameTime = 1.5 * 60 * 60;
+    gameTime = 10 * 60;
 
     state = 'game'
 }
 
-function destoryPlayers() {
-    for (var i = 0; i < players.length; i ++) {
-        players[i].sprite.destroy();
-        players[i].scoreText.destroy();
-    }
-    //game.input.keyboard.destroy();
-}
-
 function startTitle() {
+    if (state == 'gameover') {
+        endGameOver();
+    }
+
     titleTexts = []
 
     var textStyle = { font: '80px Arial', fill: '#FFFFFF', align: 'center'};
     var title = game.add.text(0.5 * game.width, 0.2 * game.height, 'WORKING TITLE 2', textStyle);
     title.anchor.x = 0.5;
+    titleTexts.push(title);
 
     var controlStyle = { font: '40px Arial', fill: '#FFFFFF', align: 'center'};
     for (var i = 0; i < instructions.length; i ++) {
@@ -84,15 +86,16 @@ function startTitle() {
         controlStyle.fill = colors[i];
         var controlText = game.add.text(0.5 * game.width, yPos * game.height, instructions[i], controlStyle);
         controlText.anchor.x = 0.5;
+        titleTexts.push(controlText);
     }
-
-    titleTexts.push(title);
 
     state = 'title'
 }
 
 function endTitle() {
-
+    for (var i = 0; i < titleTexts.length; i ++) {
+        titleTexts[i].destroy();
+    }
 }
 
 function startGameOver() {
@@ -102,12 +105,33 @@ function startGameOver() {
         makePlayerRegular(players[i]);
     }
 
-    var textStyle = { font: "20px Arial", fill: "#FFFFFF", align: 'center'};
-    gameOverText = game.add.text(game.width / 2, game.height / 2, 'GAME OVER', textStyle);
+    gameOverTexts = [];
+
+    var textStyle = { font: "80px Arial", fill: "#FFFFFF", align: 'center'};
+    var gameOverText = game.add.text(game.width / 2, 0.4 * game.height, 'GAME OVER', textStyle);
+    gameOverText.anchor.set(0.5);
+    gameOverTexts.push(gameOverText);
+
+    var winner = 0;
+    for (i = 0; i < players.length; i ++) {
+        if (players[i].score > players[winner].score) {
+            winner = i;
+        }
+    }
+
+    var winTextStyle = { font: "60px Arial", fill: colors[winner], align: 'center'};
+    var winMessage = 'Player ' + i + ' wins!'
+    var winText = game.add.text(game.width / 2, 0.7 * game.height, winMessage, winTextStyle);
+    winText.anchor.set(0.5);
+    gameOverTexts.push(winText);
+
+    state = 'gameover'
 }
 
 function endGameOver() {
-
+    for (var i = 0; i < gameOverTexts.length; i ++) {
+        gameOverTexts[i].destroy();
+    }
 }
 
 function initialisePowerUp() {
@@ -117,19 +141,33 @@ function initialisePowerUp() {
     powerUp.ySpeed = 0;
 }
 
-function initialisePlayers() {
+function initialisePlayers(numPlayers) {
     // TODO: Make the number of players selectable somewhere, somehow
     
     // This creates all the players with one big array literal.
     // Could bit made a little more modular, but on the whole it's ok.
-    players = [
-        createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT'], colors[0], true,  true ),
-        createPlayer('player2', ['W', 'A', 'S', 'D'],            colors[1], true,  false),
-        createPlayer('player3', ['I', 'J', 'K', 'L'],            colors[2], false, true ),
-        createPlayer('player4', ['T', 'F', 'G', 'H'],            colors[3], false, false),
+    var settings = [
+        ['player1', ['UP', 'LEFT', 'DOWN', 'RIGHT'], colors[0], true,  true ],
+        ['player2', ['W', 'A', 'S', 'D'],            colors[1], true,  false],
+        ['player3', ['I', 'J', 'K', 'L'],            colors[2], false, true ],
+        ['player4', ['T', 'F', 'G', 'H'],            colors[3], false, false],
     ];
-    
+    players = []
+    for (var i = 0; i < numPlayers; i ++) {
+        // setting
+        var s = settings[i];
+        var player = createPlayer(s[0], s[1], s[2], s[3], s[4]);
+        players.push(player);
+    }
     //makePlayerMega(players[0]);
+}
+
+function destoryPlayers() {
+    for (var i = 0; i < players.length; i ++) {
+        players[i].sprite.destroy();
+        players[i].scoreText.destroy();
+    }
+    //game.input.keyboard.destroy();
 }
 
 function createPlayer(spriteName, keyNames, color, upEdge, leftEdge) {
