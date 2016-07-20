@@ -9,6 +9,8 @@ var powerUp;
 var gameTime = 0;
 var timeText;
 
+var gameOverText;
+
 function preload() {
 
     game.load.image('player1', 'p1.png');
@@ -16,8 +18,6 @@ function preload() {
     game.load.image('player3', 'p3.png');
     game.load.image('player4', 'p4.png');
     game.load.image('powerup', 'EUlogo.png');
-    
-    keys = game.input.keyboard.createCursorKeys();
 }
 
 function create() {
@@ -28,10 +28,37 @@ function create() {
     startGame();
 }
 
+//------------------------------------------------
+//              STATE TRANSITIONS
+//------------------------------------------------
 function startGame() {
     initialisePlayers();
     initialisePowerUp();
-    gameTime = 2 * 60 * 60;
+    gameTime = 1.5 * 60 * 60;
+}
+
+function endGame() {
+    for (var i = 0; i < players.length; i ++) {
+        players[i].sprite.destroy();
+    }
+    powerUp.destroy();
+    //game.input.keyboard.destroy();
+}
+
+function startTitle() {
+
+}
+
+function endTitle() {
+
+}
+
+function startGameOver() {
+
+}
+
+function endGameOver() {
+
 }
 
 function initialisePowerUp() {
@@ -49,7 +76,7 @@ function initialisePlayers() {
     players = [
         createPlayer('player1', ['UP', 'LEFT', 'DOWN', 'RIGHT'], 'red', false, false),
         createPlayer('player2', ['W', 'A', 'S', 'D'], 'green', false, true),
-        createPlayer('player3', ['I', 'J', 'K', 'L'], 'blue', true, false),
+        createPlayer('player3', ['I', 'J', 'K', 'L'], '#0077FF', true, false),
         createPlayer('player4', ['T', 'F', 'G', 'H'], 'purple', true, true),
     ]
     
@@ -142,7 +169,7 @@ function randomisePowerUp() {
         // check if the power up is touching a player, if so, we restart.
         touchingSomething = false;
         for (var i = 0; i < players.length; i ++) {
-            if (spritesTouching(players[i], powerUp)) {
+            if (spritesTouching(players[i].sprite, powerUp)) {
                 touchingSomething = true;
                 break;
             }
@@ -162,7 +189,10 @@ function spritesTouching(sprite1, sprite2) {
 
 function update() {
     gameTime --;
-    var seconds = Math.floor(gameTime / 60) % 60;
+    var seconds = (Math.floor(gameTime / 60) % 60).toString();
+    while (seconds.length < 2) {
+        seconds = '0' + seconds;
+    }
     var minutes = Math.floor(gameTime / 3600);
     timeText.setText(minutes + ":" + seconds)
 
