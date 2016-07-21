@@ -47,8 +47,43 @@ function create() {
     var timeTextStyle = { font: "20px Arial", fill: "#FFFFFF", align: 'center'};
     timeText = game.add.text(game.width / 2, 0, "0:00", timeTextStyle);
 
+    // some great coding here
+    var key;
+    key = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+    key.onDown.add(startGame1Player);
+    key = game.input.keyboard.addKey(Phaser.Keyboard.TWO);
+    key.onDown.add(startGame2Player);
+    key = game.input.keyboard.addKey(Phaser.Keyboard.THREE);
+    key.onDown.add(startGame3Player);
+    key = game.input.keyboard.addKey(Phaser.Keyboard.FOUR);
+    key.onDown.add(startGame4Player);
+
     //startGame();
     startTitle();
+}
+
+function startGame1Player() {
+    if (state != 'game') {
+        startGame(1);
+    }
+}
+
+function startGame2Player() {
+    if (state != 'game') {
+        startGame(2);
+    }
+}
+
+function startGame3Player() {
+    if (state != 'game') {
+        startGame(3);
+    }
+}
+
+function startGame4Player() {
+    if (state != 'game') {
+        startGame(4);
+    }
 }
 
 //------------------------------------------------
