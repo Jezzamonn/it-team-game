@@ -97,7 +97,7 @@ function startGame(numPlayers) {
     initialisePlayers(numPlayers);
     initialisePowerUp();
     gameTime = 1.5 * 60 * 60;
-    gameTime = 10 * 60;
+    //gameTime = 10 * 60;
 
     state = 'game'
 }
