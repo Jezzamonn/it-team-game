@@ -5,6 +5,7 @@ var powerUpSpeed = 2;
 
 var players = [];
 var powerUp;
+var powerUpTime = 0;
 
 var gameTime = 0;
 var timeText;
@@ -155,7 +156,7 @@ function startGameOver() {
     }
 
     var winTextStyle = { font: "60px Arial", fill: colors[winner], align: 'center'};
-    var winMessage = 'Player ' + i + ' wins!'
+    var winMessage = 'Player ' + (winner + 1) + ' wins!'
     var winText = game.add.text(game.width / 2, 0.7 * game.height, winMessage, winTextStyle);
     winText.anchor.set(0.5);
     gameOverTexts.push(winText);
@@ -328,6 +329,14 @@ function update() {
     timeText.setText(minutes + ":" + seconds)
 
     if (powerUp) {
+		powerUpTime --;
+		if (powerUpTime < 0) {
+			powerUp.visible = true;
+		}
+		else {
+			powerUp.visible = false;
+		}
+		
         powerUp.tint = Math.floor(0xFFFFFF * Math.random())
         powerUp.x += powerUp.xSpeed;
         powerUp.y += powerUp.ySpeed;
@@ -357,13 +366,18 @@ function update() {
         player = players[i];
         sprite = players[i].sprite;
         keys = players[i].keys;
+
+        var curSpeed = playerSpeed * player.speedScale;
+        if ((keys.down.isDown || keys.up.isDown) && (keys.left.isDown || keys.right.isDown)) {
+            curSpeed /= Math.sqrt(2);
+        }
         
         // vertical movement
         if (keys.down.isDown) {
-            sprite.y += playerSpeed * player.speedScale;
+            sprite.y += curSpeed;
         }
         if (keys.up.isDown) {
-            sprite.y -= playerSpeed * player.speedScale;
+            sprite.y -= curSpeed;
         }
         // force the player to be within the game boundaries
         if (sprite.y < 0) {
@@ -375,10 +389,10 @@ function update() {
         
         // horizontal movement
         if (keys.right.isDown) {
-            sprite.x += playerSpeed * player.speedScale;
+            sprite.x += curSpeed;
         }
         if (keys.left.isDown) {
-            sprite.x -= playerSpeed * player.speedScale;
+            sprite.x -= curSpeed;
         }
         // force the player to be within the game boundaries
         if (sprite.x < 0) {
@@ -419,12 +433,14 @@ function update() {
             }
         }
 
-        if (powerUp != null && spritesTouching(player.sprite, powerUp)) {
+        if (powerUp != null && powerUp.visible && spritesTouching(player.sprite, powerUp)) {
             for (j = 0; j < players.length; j ++) {
                 makePlayerRegular(players[j]);
             }
             makePlayerMega(player);
             randomisePowerUp();
+            powerUpTime = 1 * 60;
+            powerUp.visible = false;
         }
     }
 }
